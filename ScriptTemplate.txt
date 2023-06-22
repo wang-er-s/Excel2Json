@@ -1,30 +1,69 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Framework;
 
-[Config("#load_config_path")]
-public partial class #class_name
+public partial class #class_name : BaseConfig
 {
     #fields
+}
 
-    public static Dictionary<int, #class_name> Data { get; private set; }
-	    
-    private static void Load(string content)
+[Config("#load_config_path")]
+public partial class #class_nameFactory : ConfigSingleton<#class_nameFactory>
+{
+    private Dictionary<int, #class_name> dict = new Dictionary<int, #class_name>();
+
+    [MongoDB.Bson.Serialization.Attributes.BsonElement]
+    private List<#class_name> list = new List<#class_name>();
+
+    public void Merge(#class_nameFactory o)
     {
-        if (Data != null) return;
-        BeginInit();
-        Data = SerializeHelper.DeSerialize<Dictionary<int, #class_name>>(content);
-        EndInit();
+        this.list.AddRange(o.list);
     }
 
-    public static #class_name GetById(int id)
+    public override void EndInit()
     {
-        if (Data.TryGetValue(id, out var result))
-            return result;
-        return null;
+        foreach (#class_name config in list)
+        {
+            this.dict.Add(config.ID, config);
+        }
+
+        this.list.Clear();
+
+        this.AfterEndInit();
+    }
+    
+    partial void AfterEndInit();
+
+    public #class_name Get(int id)
+    {
+        this.dict.TryGetValue(id, out #class_name #class_name);
+
+        if (#class_name == null)
+        {
+            Log.Error($"配置找不到，配置表名: {nameof(#class_name)}，配置id: {id}");
+        }
+
+        return #class_name;
     }
 
-    static partial void BeginInit();
+    public bool Contain(int id)
+    {
+        return this.dict.ContainsKey(id);
+    }
 
-    static partial void EndInit();
+    public IReadOnlyDictionary<int, #class_name> GetAll()
+    {
+        return this.dict;
+    }
+
+    public #class_name GetOne()
+    {
+        if (this.dict == null || this.dict.Count <= 0)
+        {
+            return null;
+        }
+
+        return list.GetRandomValue();
+    }
 }
