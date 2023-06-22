@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "excel2json2", "excel2json2.csproj", "{45A2B492-59B3-46B5-B6F7-54770F4A7657}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "excel2json", "excel2json.csproj", "{45A2B492-59B3-46B5-B6F7-54770F4A7657}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

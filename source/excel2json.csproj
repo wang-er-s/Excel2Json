@@ -8,8 +8,8 @@
         <ProjectGuid>{45A2B492-59B3-46B5-B6F7-54770F4A7657}</ProjectGuid>
         <OutputType>Exe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>excel2json2</RootNamespace>
-        <AssemblyName>excel2json2</AssemblyName>
+        <RootNamespace>excel2json</RootNamespace>
+        <AssemblyName>excel2json</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -39,7 +39,10 @@
           <HintPath>packages\CommandLineParser.2.9.1\lib\net461\CommandLine.dll</HintPath>
         </Reference>
         <Reference Include="Excel">
-          <HintPath>dll\Excel.dll</HintPath>
+          <HintPath>Dll\Excel.dll</HintPath>
+        </Reference>
+        <Reference Include="ICSharpCode.SharpZipLib">
+          <HintPath>Dll\ICSharpCode.SharpZipLib.dll</HintPath>
         </Reference>
         <Reference Include="Microsoft.CodeAnalysis, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <HintPath>packages\Microsoft.CodeAnalysis.Common.4.5.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
