@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Framework;
 
 public partial class #class_name : BaseConfig
