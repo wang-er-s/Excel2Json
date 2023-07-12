@@ -39,7 +39,7 @@ public partial class #class_nameFactory : ConfigSingleton<#class_nameFactory>
 
         if (#class_name == null)
         {
-            Log.Error($"配置找不到，配置表名: {nameof(#class_name)}，配置id: {id}");
+            Log.Warning($"配置找不到，配置表名: {nameof(#class_name)}，配置id: {id}");
         }
 
         return #class_name;
