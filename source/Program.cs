@@ -62,7 +62,15 @@ namespace ExcelToJson
                 DataFiller.FillData(excelPath, data);
             }
 
-            CSExporter.Export(data);
+            switch (Options.Default.ScriptType)
+            {
+                case ScriptType.CS:
+                    CSExporter.Export(data);
+                    break;
+                case ScriptType.TS:
+                    TsExporter.Export(data);
+                    break;
+            }
         }
 
         private static void PreCompileEnum()
@@ -72,14 +80,7 @@ namespace ExcelToJson
             StringBuilder enumSb = new();
 
             int index = 0;
-            if (Directory.Exists(Options.Default.ScriptPath))
-            {
-                string[] files = Directory.GetFiles(Options.Default.ScriptPath);
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-            }
+
 
             Directory.CreateDirectory(Options.Default.ScriptPath);
             Directory.CreateDirectory(Options.Default.JsonPath);

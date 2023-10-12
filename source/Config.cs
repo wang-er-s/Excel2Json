@@ -5,6 +5,12 @@ using CommandLine;
 
 namespace ExcelToJson
 {
+    public enum ScriptType
+    {
+        CS,
+        TS
+    }
+    
     /// <summary>
     ///     命令行参数定义
     /// </summary>
@@ -25,6 +31,9 @@ namespace ExcelToJson
 
         [Option("script_template_path")]
         public string ScriptTemplate { get; set; }
+        
+        [Option("script_type")]
+        public ScriptType ScriptType { get; set; }
 
         public void Check()
         {

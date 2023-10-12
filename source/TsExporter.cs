@@ -12,6 +12,15 @@ namespace ExcelToJson
     {
         public static void Export(Dictionary<string, OneClassData> data)
         {
+            if (Directory.Exists(Options.Default.ScriptPath))
+            {
+                string[] files = Directory.GetFiles(Options.Default.ScriptPath);
+                foreach (string file in files)
+                {
+                    if (file.EndsWith(".ts"))
+                        File.Delete(file);
+                }
+            }
             string scriptTemplate = File.ReadAllText(Options.Default.ScriptTemplate);
             StringBuilder enumSb = new StringBuilder();
             foreach (var type in RuntimeAssembly.RuntimeAsm.GetTypes())
