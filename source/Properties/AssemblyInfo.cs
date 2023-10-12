@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("excel2json2")]
+[assembly: AssemblyTitle("excel2json")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("excel2json2")]
+[assembly: AssemblyProduct("excel2json")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("45A2B492-59B3-46B5-B6F7-54770F4A7657")]
+[assembly: Guid("CAFFCA0E-19A6-4EFF-AAD6-C15CD24223DC")]
 
 // Version information for an assembly consists of the following four values:
 //

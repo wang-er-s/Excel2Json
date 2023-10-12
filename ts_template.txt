@@ -1,0 +1,21 @@
+export class #class_name
+{
+    #fields
+
+    static Data: object;
+	
+	static SetData(data: object)
+    {
+        #class_name.Data = data;
+    }
+	
+	static Has(id: number): boolean
+    {
+        return #class_name.Data[id] === undefined;
+    }
+
+    static GetById(id: number): #class_name
+    {
+        return #class_name.Data[id];
+    }
+}

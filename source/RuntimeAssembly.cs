@@ -1,51 +1,61 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CSharp;
+using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using System.IO;
+using Microsoft.CodeAnalysis.Emit;
+using System.Linq;
 
 namespace ExcelToJson
 {
     public static class RuntimeAssembly
     {
         public static Assembly RuntimeAsm;
-
-        private static string BaseProgram = @"
+        private readonly static string Template = @"
 using System.Collections.Generic;
 using System;
             class Program{
                 static void Main(string[] args){
                 }
             }";
-        
+
+        private static string BaseProgram = Template;
+
         public static void Compile(List<string> classes)
         {
+            var csc = new CSharpCodeProvider(new Dictionary<string, string>() {{"CompilerVersion", "v3.5"}});
+            var parameters = new CompilerParameters(new[] {"mscorlib.dll", "System.Core.dll"}, "", false);
+            parameters.GenerateExecutable = true;
             StringBuilder sb = new StringBuilder();
+            sb.Append(BaseProgram);
             foreach (string @class in classes)
             {
                 sb.Append(@class);
             }
-
-            var success = CompileAssembly(sb.ToString(), out RuntimeAsm, out var error);
-            if (success) return;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("compile error！！！");
-            Console.WriteLine(error);
-            Console.ResetColor();
+            CompilerResults results = csc.CompileAssemblyFromSource(parameters, sb.ToString());
+            sb.Clear();
+            if (results.Errors.HasErrors)
+            {
+                foreach (CompilerError compilerError in results.Errors)
+                {
+                    sb.AppendLine(compilerError.ErrorText);
+                }
+                Console.WriteLine("compile error！！！");
+                Console.WriteLine(sb.ToString());
+            }
+            RuntimeAsm = results.CompiledAssembly;
         }
-
+        
         public static void AddToBaseProgram(string str)
         {
             BaseProgram += str;
         }
-
+        
         public static void CheckClass(string @class)
         {
             var success = CompileAssembly(@class, out var _, out string error);
@@ -67,7 +77,7 @@ using System;
             Console.ResetColor();
             throw new Exception(error);
         }
-
+        
         private static bool CompileAssembly(string classContent, out Assembly resultAssembly, out string error)
         {
             resultAssembly = null;
@@ -104,7 +114,6 @@ using System;
                 PortableExecutableReference reference = MetadataReference.CreateFromFile(assembly.Location);
                 references.Add(reference);
             }
-            references.Add(MetadataReference.CreateFromFile(typeof(MongoDB.Bson.Serialization.BsonSerializer).Assembly.Location));
 
             // analyse and generate IL code from syntax tree
             CSharpCompilation compilation = CSharpCompilation.Create(
@@ -136,6 +145,11 @@ using System;
 
             error = sb.ToString();
             return false;
+        }
+
+        public static void Clear()
+        {
+            BaseProgram = Template;
         }
     }
 }

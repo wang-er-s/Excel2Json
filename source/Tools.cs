@@ -1,6 +1,7 @@
-using System;
+using System.Collections.Generic;
 using System.IO;
-using Excel;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ExcelToJson
 {
@@ -17,11 +18,18 @@ namespace ExcelToJson
         /// </summary>
         public static string GetTableGenName(string excelPath, string tableName)
         {
-            string name = Path.GetFileNameWithoutExtension(excelPath);
-            // if (Regex.Match(tableName, @"Sheet\d+", RegexOptions.IgnoreCase).Success)
-            // {
-            //     ;
-            // }
+            string name = tableName;
+            if (Regex.Match(tableName, @"Sheet\d+", RegexOptions.IgnoreCase).Success)
+            {
+                name = Path.GetFileNameWithoutExtension(excelPath);
+            }
+            else
+            {
+                name = tableName;
+                var className = Path.GetFileNameWithoutExtension(excelPath);
+                if (Program.ExportExcelPaths.Contains(className))
+                    Program.ExportExcelPaths.Add(name);
+            }
             return name;
         }
 
@@ -32,24 +40,29 @@ namespace ExcelToJson
         
         public static bool CheckTableIsIgnore(string tableName)
         {
-            return tableName.StartsWith("#");
+            return (tableName.StartsWith("#") || tableName == "说明");
         }
 
-        public static IExcelDataReader CreateExcelReader(string path)
+        public static List<FileInfo> GetExcelFiles(string path)
         {
-            using FileStream excelFile = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var extension = Path.GetExtension(path);
-            IExcelDataReader result;
-            if (extension == ".xls")
+            List<FileInfo> result = new List<FileInfo>();
+            DirectoryInfo root = new DirectoryInfo(path);
+            var files = root.GetFiles("*.xls");
+            foreach (FileInfo fileInfo in files)
             {
-                result = ExcelReaderFactory.CreateBinaryReader(excelFile);
-            }else if (extension == ".xlsx")
-            {
-                result = ExcelReaderFactory.CreateOpenXmlReader(excelFile);
+                if (!fileInfo.Name.StartsWith("~") && Path.GetExtension(fileInfo.Name) == ".xls")
+                {
+                    result.Add(fileInfo);
+                }
             }
-            else
+            
+            files = root.GetFiles("*.xlsx");
+            foreach (FileInfo fileInfo in files)
             {
-                throw new NotSupportedException($"不支持后缀为{extension}的文件");
+                if (!fileInfo.Name.StartsWith("~") &&  Path.GetExtension(fileInfo.Name) == ".xlsx")
+                {
+                    result.Add(fileInfo);
+                }
             }
 
             return result;

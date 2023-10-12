@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Framework;
 
 public partial class #class_name : BaseConfig
@@ -30,8 +32,8 @@ public partial class #class_nameFactory : ConfigSingleton<#class_nameFactory>
 
         this.AfterEndInit();
     }
-    
-    partial void AfterEndInit();
+	
+	partial void AfterEndInit();
 
     public #class_name Get(int id)
     {
@@ -39,7 +41,7 @@ public partial class #class_nameFactory : ConfigSingleton<#class_nameFactory>
 
         if (#class_name == null)
         {
-            Log.Warning($"配置找不到，配置表名: {nameof(#class_name)}，配置id: {id}");
+            throw new Exception($"配置找不到，配置表名: {nameof(#class_name)}，配置id: {id}");
         }
 
         return #class_name;

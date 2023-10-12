@@ -24,5 +24,6 @@ bld/
 # Visual Studio 2019 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the
-/source/.idea
 *.DS_Store
+/source/packages
+.idea

@@ -1,0 +1,29 @@
+{
+  "1": {
+    "ID": 1,
+    "Name": "张三",
+    "TestList": [
+      1,
+      2,
+      3
+    ],
+    "TestEnumList": [
+      1,
+      1,
+      2,
+      0
+    ],
+    "Type": 1,
+    "TestDic": {
+      "1": "aa",
+      "2": "bb",
+      "3": "cc"
+    },
+    "TestEnumDic": {
+      "Weapon": 1,
+      "Cloth": 2
+    },
+    "TestBool": true,
+    "TestBool2": true
+  }
+}

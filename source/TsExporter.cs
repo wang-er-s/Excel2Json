@@ -8,11 +8,7 @@ using Newtonsoft.Json;
 
 namespace ExcelToJson
 {
-    /// <summary>
-    /// 根据表头，生成C#类定义数据结构
-    /// 表头使用三行定义：字段名称、字段类型、注释
-    /// </summary>
-    static class CSExporter
+    public class TsExporter
     {
         public static void Export(Dictionary<string, OneClassData> data)
         {
@@ -24,7 +20,7 @@ namespace ExcelToJson
                     continue;
                 if (type.IsEnum)
                 {
-                    enumSb.AppendLine($"public enum {type.Name}{{");
+                    enumSb.AppendLine($"export enum {type.Name}{{");
                     foreach (string enumName in Enum.GetNames(type))
                     {
                         int enumValue = Convert.ToInt32(Enum.Parse(type, enumName));
@@ -52,29 +48,39 @@ namespace ExcelToJson
                         {
                             if (data[type.Name].PropName2Comment.TryGetValue(property.Name, out string value))
                             {
-                                filedSb.AppendLine($"\t/// {value}");
+                                filedSb.AppendLine($"\t//{value}");
                             }
 
                             if (typeof(IDictionary).IsAssignableFrom(property.PropertyType))
                             {
                                 var keyGenericType = property.PropertyType.GetGenericArguments()[0];
                                 var valueGenericType = property.PropertyType.GetGenericArguments()[1];
-                                filedSb.AppendLine($"\tpublic Dictionary<{keyGenericType},{valueGenericType}> {property.Name}{{get; private set;}}");
+                                filedSb.AppendLine(
+                                    $"\t{property.Name}: Map<{CsType2JsType[keyGenericType]},{CsType2JsType[valueGenericType]}>");
                             }
                             else if (typeof(IList).IsAssignableFrom(property.PropertyType))
                             {
                                 var genericType = property.PropertyType.GetGenericArguments()[0];
-                                filedSb.AppendLine($"\tpublic List<{genericType}> {property.Name}{{get; private set;}}");
+                                filedSb.AppendLine($"\t{property.Name}: {CsType2JsType[genericType]}[]");
+                            }
+                            else if (CsType2JsType.TryGetValue(property.PropertyType, out string typeStr))
+                            {
+                                filedSb.AppendLine($"\t{property.Name}: {typeStr}");
                             }
                             else
                             {
-                                filedSb.AppendLine($"\tpublic {property.PropertyType.Name} {property.Name}{{get; private set;}}");
+                                filedSb.AppendLine($"\t{property.Name}: {property.PropertyType.Name}");
+                                // 如果是枚举，需要在顶部引用一下
+                                if (property.PropertyType.IsEnum)
+                                {
+                                    sb.Insert(0, $"import{{ {property.PropertyType.Name} }} from \"./enum\"\n");
+                                }
                             }
                         }
 
                         sb.Replace("#class_name", type.Name);
                         sb.Replace("#fields", filedSb.ToString());
-                        File.WriteAllText(Path.Combine(Options.Default.ScriptPath, type.Name + ".cs"),
+                        File.WriteAllText(Path.Combine(Options.Default.ScriptPath, type.Name + ".ts"),
                             sb.ToString());
                     }
 
@@ -86,8 +92,16 @@ namespace ExcelToJson
 
             if (enumSb.Length > 0)
             {
-                File.WriteAllText(Path.Combine(Options.Default.ScriptPath, "enum.cs"), enumSb.ToString());
+                File.WriteAllText(Path.Combine(Options.Default.ScriptPath, "enum.ts"), enumSb.ToString());
             }
         }
+
+        private static Dictionary<Type, string> CsType2JsType = new Dictionary<Type, string>()
+        {
+            { typeof(int), "number" },
+            { typeof(float), "number" },
+            { typeof(string), "string" },
+            { typeof(bool), "boolean" },
+        };
     }
 }
